@@ -10,6 +10,8 @@ export const Forms: React.FC = () => {
   const [userphone, setUserphone] = useState("");
   const [isValidPhone, setValidPhone] = useState(false);
   const [errorPhone, setErrorPhone] = useState("");
+  const [isValidMessage, setValidMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const colorErrorLabel = (errorMessage: string) => {
     const color = !errorMessage ? "#000000" : "#db2a2a";
@@ -58,6 +60,19 @@ export const Forms: React.FC = () => {
       setErrorPhone("");
     }
     console.log(phone.length);
+  };
+
+  const validMessage = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const message = e.target.value;
+
+    if (message.length < 10 || message.length > 300) {
+      setErrorMessage("Сообщение должно содержать от 10 до 300 символов");
+      setValidMessage(false);
+      if (!message.length) setErrorMessage("");
+    } else {
+      setErrorMessage("");
+      setValidMessage(true);
+    }
   };
 
   return (
@@ -115,13 +130,20 @@ export const Forms: React.FC = () => {
           <p className="form-error">Error</p>
         </div>
         <div>
-          <label htmlFor="message">Оставьте свое сообщение</label> <br />
+          <label
+            htmlFor="message"
+            style={{ color: colorErrorLabel(errorName) }}
+          >
+            Оставьте свое сообщение
+          </label>
+          <br />
           <textarea
             name="message"
             id="message"
             placeholder="Введите сообщение"
+            onChange={validMessage}
           ></textarea>
-          <p className="form-error">Error</p>
+          <p className="form-error">{errorMessage}</p>
         </div>
         <button className="send-btn">Отправить</button>
       </form>
