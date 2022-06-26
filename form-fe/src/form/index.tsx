@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { FormType } from "../interface/Forms";
 import { getToday } from "../utils/getToday";
 import "./style.scss";
 
@@ -16,6 +17,13 @@ export const Forms: React.FC = () => {
   const [isValidMessage, setValidMessage] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [validButton, setValidButton] = useState<boolean>(true);
+  const [forms, setForm] = useState<FormType>({
+    name: "",
+    email: "",
+    phone: "",
+    date: "",
+    message: "",
+  });
 
   useEffect(() => {
     const isValid =
@@ -32,6 +40,10 @@ export const Forms: React.FC = () => {
     return color;
   };
 
+  const changeHandler = (name: string, value: string) => {
+    setForm({ ...forms, [name]: value });
+  };
+
   const validName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.value;
     const reg = /^\s?[a-zA-Z]{3,30}\s([a-zA-Z]{3,30})$/i.test(name);
@@ -44,8 +56,8 @@ export const Forms: React.FC = () => {
     } else {
       setErrorName("");
       setValidName(false);
+      changeHandler("name", name.toUpperCase());
     }
-
     setUsername(name.toUpperCase());
   };
 
@@ -59,6 +71,7 @@ export const Forms: React.FC = () => {
     } else {
       setErrorEmail("");
       setValidEmail(false);
+      changeHandler("email", email);
     }
   };
 
@@ -74,19 +87,20 @@ export const Forms: React.FC = () => {
       );
       setErrorPhone("");
       setValidPhone(false);
+      changeHandler("phone", phone);
     }
-    console.log(phone.length);
   };
 
-  const validData = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const data = e.target.value;
+  const validDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const date = e.target.value;
 
-    if (data === "" || data > getToday()) {
+    if (date === "" || date > getToday()) {
       setErrorDate("Введите корректную дату");
       setValidDate(true);
     } else {
       setErrorDate("");
       setValidDate(false);
+      changeHandler("date", date);
     }
   };
 
@@ -100,7 +114,13 @@ export const Forms: React.FC = () => {
     } else {
       setErrorMessage("");
       setValidMessage(false);
+      changeHandler("message", message);
     }
+  };
+
+  const sendForm = (e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log(forms);
   };
 
   return (
@@ -162,7 +182,7 @@ export const Forms: React.FC = () => {
             name="date"
             id="date"
             max={getToday()}
-            onFocus={validData}
+            onFocus={validDate}
           />
           <p className="form-error">{errorDate}</p>
         </div>
@@ -182,7 +202,7 @@ export const Forms: React.FC = () => {
           ></textarea>
           <p className="form-error">{errorMessage}</p>
         </div>
-        <button className="send-btn" disabled={validButton}>
+        <button className="send-btn" disabled={validButton} onClick={sendForm}>
           Отправить
         </button>
       </form>
