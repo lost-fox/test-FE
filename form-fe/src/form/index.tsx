@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { getToday } from "../utils/getToday";
 import "./style.scss";
 
 export const Forms: React.FC = () => {
@@ -10,6 +11,8 @@ export const Forms: React.FC = () => {
   const [userphone, setUserphone] = useState("");
   const [isValidPhone, setValidPhone] = useState(false);
   const [errorPhone, setErrorPhone] = useState("");
+  const [isValidDate, setValidDate] = useState(false);
+  const [errorDate, setErrorDate] = useState("");
   const [isValidMessage, setValidMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -60,6 +63,18 @@ export const Forms: React.FC = () => {
       setErrorPhone("");
     }
     console.log(phone.length);
+  };
+
+  const validData = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const data = e.target.value;
+
+    if (data === "" || data > getToday()) {
+      setErrorDate("Введите корректную дату");
+      setValidDate(false);
+    } else {
+      setErrorDate("");
+      setValidDate(true);
+    }
   };
 
   const validMessage = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -126,8 +141,15 @@ export const Forms: React.FC = () => {
         </div>
         <div>
           <label htmlFor="date">Дата рождения </label> <br />
-          <input type="date" name="date" id="date" />
-          <p className="form-error">Error</p>
+          <input
+            type="date"
+            name="date"
+            id="date"
+            max={getToday()}
+            // onChange={validData}
+            onFocus={validData}
+          />
+          <p className="form-error">{errorDate}</p>
         </div>
         <div>
           <label
