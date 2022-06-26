@@ -7,6 +7,9 @@ export const Forms: React.FC = () => {
   const [errorName, setErrorName] = useState("");
   const [isValidEmail, setValidEmail] = useState(false);
   const [errorEmail, setErrorEmail] = useState("");
+  const [userphone, setUserphone] = useState("");
+  const [isValidPhone, setValidPhone] = useState(false);
+  const [errorPhone, setErrorPhone] = useState("");
 
   const colorErrorLabel = (errorMessage: string) => {
     const color = !errorMessage ? "#000000" : "#db2a2a";
@@ -41,6 +44,20 @@ export const Forms: React.FC = () => {
       setErrorEmail("");
       setValidEmail(true);
     }
+  };
+
+  const validPhone = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const phone = e.target.value;
+    if (phone.length > 0 && phone.length < 10) {
+      setErrorPhone("Введите номер в формате YYYXXXXXXX, где YYY - код");
+      setUserphone(phone);
+    } else {
+      setUserphone(
+        phone.replace(/^(\d{3})(\d{3})(\d{2})(\d{2})$/, "+7 ($1) $2-$3-$4")
+      );
+      setErrorPhone("");
+    }
+    console.log(phone.length);
   };
 
   return (
@@ -78,14 +95,19 @@ export const Forms: React.FC = () => {
           <p className="form-error">{errorEmail}</p>
         </div>
         <div>
-          <label htmlFor="phone">Номер телефона </label> <br />
+          <label htmlFor="phone" style={{ color: colorErrorLabel(errorPhone) }}>
+            Номер телефона
+          </label>
+          <br />
           <input
             type="tel"
             name="phone"
             id="phone"
             placeholder="Введите номер телефона"
+            value={userphone}
+            onChange={validPhone}
           />
-          <p className="form-error">Error</p>
+          <p className="form-error">{errorPhone}</p>
         </div>
         <div>
           <label htmlFor="date">Дата рождения </label> <br />
