@@ -2,7 +2,6 @@
    margin-top: 10vh;
    padding: 20px;
 
-   // border: 1px solid #000000;
    border-bottom-right-radius: 20px;
    border-top-left-radius: 20px;
    box-shadow: 0px 0px 20px 4px rgba(34, 60, 80, 0.2);
@@ -15,7 +14,8 @@
       height: 25px;
       width: 80%;
 
-      margin: 5px 0 10px;
+      margin-top: 5px;
+      margin-bottom: 10px;
       padding: 2px 25px;
       border: 1px solid #000000;
       border-radius: 10px;
@@ -24,5 +24,31 @@
    textarea{
       height: 55px;
       padding: 12px 25px;
+   }
+
+   .form-error{
+      // display: none;
+      margin: 1px 0;
+      margin-top: -5px;
+      color: #db2a2a;
+      font-size: 14px;
+   }
+
+   .send-btn{
+      width: 100%;
+
+      padding: 5px;
+      margin-top: 10px;
+
+      border: none;
+      font-size: 18px;
+      background-color: #9bc0f8;
+      transition: 1s;
+
+      &:hover{
+         cursor: pointer;
+         background-color: #44546b;
+         color: #ffffff;
+      }
    }
 }

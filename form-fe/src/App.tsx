@@ -5,7 +5,7 @@ function App() {
   return (
     <div className="container-app">
       <Forms />
-    </div>  
+    </div>
   );
 }
 
