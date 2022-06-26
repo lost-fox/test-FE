@@ -1,20 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getToday } from "../utils/getToday";
 import "./style.scss";
 
 export const Forms: React.FC = () => {
   const [username, setUsername] = useState("");
-  const [isValidName, setValidName] = useState(false);
+  const [isValidName, setValidName] = useState(true);
   const [errorName, setErrorName] = useState("");
-  const [isValidEmail, setValidEmail] = useState(false);
+  const [isValidEmail, setValidEmail] = useState(true);
   const [errorEmail, setErrorEmail] = useState("");
   const [userphone, setUserphone] = useState("");
-  const [isValidPhone, setValidPhone] = useState(false);
+  const [isValidPhone, setValidPhone] = useState(true);
   const [errorPhone, setErrorPhone] = useState("");
-  const [isValidDate, setValidDate] = useState(false);
+  const [isValidDate, setValidDate] = useState(true);
   const [errorDate, setErrorDate] = useState("");
-  const [isValidMessage, setValidMessage] = useState(false);
+  const [isValidMessage, setValidMessage] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [validButton, setValidButton] = useState<boolean>(true);
+
+  useEffect(() => {
+    const isValid =
+      !isValidName &&
+      !isValidEmail &&
+      !isValidPhone &&
+      !isValidDate &&
+      !isValidMessage;
+    setValidButton(!isValid);
+  }, [isValidDate, isValidEmail, isValidMessage, isValidName, isValidPhone]);
 
   const colorErrorLabel = (errorMessage: string) => {
     const color = !errorMessage ? "#000000" : "#db2a2a";
@@ -28,11 +39,11 @@ export const Forms: React.FC = () => {
       setErrorName(
         "Поле должно состоять из 2-х слов латинского алфавита, длинной от 3 до 30 символов и 1 пробел между словами"
       );
-      setValidName(false);
+      setValidName(true);
       if (!name.length) setErrorName("");
     } else {
       setErrorName("");
-      setValidName(true);
+      setValidName(false);
     }
 
     setUsername(name.toUpperCase());
@@ -43,24 +54,26 @@ export const Forms: React.FC = () => {
     const reg = /^[-\w.]+@([A-z0-9][-A-z0-9]+\.)+[A-z]{2,4}$/gi.test(email);
     if (!reg) {
       setErrorEmail("Введите корректный E-mail");
-      setValidEmail(false);
+      setValidEmail(true);
       if (!email.length) setErrorEmail("");
     } else {
       setErrorEmail("");
-      setValidEmail(true);
+      setValidEmail(false);
     }
   };
 
   const validPhone = (e: React.ChangeEvent<HTMLInputElement>) => {
     const phone = e.target.value;
-    if (phone.length > 0 && phone.length < 10) {
+    if (phone.length !== 10 && phone.length !== 19) {
       setErrorPhone("Введите номер в формате YYYXXXXXXX, где YYY - код");
       setUserphone(phone);
+      setValidPhone(true);
     } else {
       setUserphone(
         phone.replace(/^(\d{3})(\d{3})(\d{2})(\d{2})$/, "+7 ($1) $2-$3-$4")
       );
       setErrorPhone("");
+      setValidPhone(false);
     }
     console.log(phone.length);
   };
@@ -70,10 +83,10 @@ export const Forms: React.FC = () => {
 
     if (data === "" || data > getToday()) {
       setErrorDate("Введите корректную дату");
-      setValidDate(false);
+      setValidDate(true);
     } else {
       setErrorDate("");
-      setValidDate(true);
+      setValidDate(false);
     }
   };
 
@@ -82,11 +95,11 @@ export const Forms: React.FC = () => {
 
     if (message.length < 10 || message.length > 300) {
       setErrorMessage("Сообщение должно содержать от 10 до 300 символов");
-      setValidMessage(false);
+      setValidMessage(true);
       if (!message.length) setErrorMessage("");
     } else {
       setErrorMessage("");
-      setValidMessage(true);
+      setValidMessage(false);
     }
   };
 
@@ -140,13 +153,15 @@ export const Forms: React.FC = () => {
           <p className="form-error">{errorPhone}</p>
         </div>
         <div>
-          <label htmlFor="date">Дата рождения </label> <br />
+          <label htmlFor="date" style={{ color: colorErrorLabel(errorPhone) }}>
+            Дата рождения
+          </label>
+          <br />
           <input
             type="date"
             name="date"
             id="date"
             max={getToday()}
-            // onChange={validData}
             onFocus={validData}
           />
           <p className="form-error">{errorDate}</p>
@@ -154,7 +169,7 @@ export const Forms: React.FC = () => {
         <div>
           <label
             htmlFor="message"
-            style={{ color: colorErrorLabel(errorName) }}
+            style={{ color: colorErrorLabel(errorMessage) }}
           >
             Оставьте свое сообщение
           </label>
@@ -167,7 +182,9 @@ export const Forms: React.FC = () => {
           ></textarea>
           <p className="form-error">{errorMessage}</p>
         </div>
-        <button className="send-btn">Отправить</button>
+        <button className="send-btn" disabled={validButton}>
+          Отправить
+        </button>
       </form>
     </div>
   );

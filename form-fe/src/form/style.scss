@@ -66,5 +66,10 @@
          background-color: #44546b;
          color: #ffffff;
       }
+
+      &:disabled{
+         background-color: #8b8888;
+         color:#44546b;
+      }
    }
 }
