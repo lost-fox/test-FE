@@ -5,6 +5,8 @@ export const Forms: React.FC = () => {
   const [username, setUsername] = useState("");
   const [isValidName, setValidName] = useState(false);
   const [errorName, setErrorName] = useState("");
+  const [isValidEmail, setValidEmail] = useState(false);
+  const [errorEmail, setErrorEmail] = useState("");
 
   const colorErrorLabel = (errorMessage: string) => {
     const color = !errorMessage ? "#000000" : "#db2a2a";
@@ -28,6 +30,19 @@ export const Forms: React.FC = () => {
     setUsername(name.toUpperCase());
   };
 
+  const validEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const email = e.target.value;
+    const reg = /^[-\w.]+@([A-z0-9][-A-z0-9]+\.)+[A-z]{2,4}$/gi.test(email);
+    if (!reg) {
+      setErrorEmail("Введите корректный E-mail");
+      setValidEmail(false);
+      if (!email.length) setErrorEmail("");
+    } else {
+      setErrorEmail("");
+      setValidEmail(true);
+    }
+  };
+
   return (
     <div className="container-form">
       <h1 className="form-title">Обратная связь</h1>
@@ -48,15 +63,19 @@ export const Forms: React.FC = () => {
           <p className="form-error">{errorName}</p>
         </div>
         <div>
-          <label htmlFor="email">E-mail </label> <br />
+          <label htmlFor="email" style={{ color: colorErrorLabel(errorEmail) }}>
+            E-mail
+          </label>
+          <br />
           <input
             type="email"
             name="email"
             id="email"
             placeholder="Введите E-mail"
             formNoValidate
+            onChange={validEmail}
           />
-          <p className="form-error">Error</p>
+          <p className="form-error">{errorEmail}</p>
         </div>
         <div>
           <label htmlFor="phone">Номер телефона </label> <br />
