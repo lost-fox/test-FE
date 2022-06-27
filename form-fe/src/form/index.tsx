@@ -7,16 +7,20 @@ export const Forms: React.FC = () => {
   const [username, setUsername] = useState("");
   const [isValidName, setValidName] = useState(true);
   const [errorName, setErrorName] = useState("");
+  const [email, setEmail] = useState("");
   const [isValidEmail, setValidEmail] = useState(true);
   const [errorEmail, setErrorEmail] = useState("");
   const [userphone, setUserphone] = useState("");
   const [isValidPhone, setValidPhone] = useState(true);
   const [errorPhone, setErrorPhone] = useState("");
+  const [date, setDate] = useState("");
   const [isValidDate, setValidDate] = useState(true);
   const [errorDate, setErrorDate] = useState("");
+  const [message, setMessage] = useState("");
   const [isValidMessage, setValidMessage] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [validButton, setValidButton] = useState<boolean>(true);
+  const [status, setStatus] = useState<string>("");
   const [forms, setForm] = useState<FormType>({
     name: "",
     email: "",
@@ -63,6 +67,7 @@ export const Forms: React.FC = () => {
 
   const validEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
+    setEmail(email);
     const reg = /^[-\w.]+@([A-z0-9][-A-z0-9]+\.)+[A-z]{2,4}$/gi.test(email);
     if (!reg) {
       setErrorEmail("Введите корректный E-mail");
@@ -93,7 +98,7 @@ export const Forms: React.FC = () => {
 
   const validDate = (e: React.ChangeEvent<HTMLInputElement>) => {
     const date = e.target.value;
-
+    setDate(date);
     if (date === "" || date > getToday()) {
       setErrorDate("Введите корректную дату");
       setValidDate(true);
@@ -106,7 +111,7 @@ export const Forms: React.FC = () => {
 
   const validMessage = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const message = e.target.value;
-
+    setMessage(message);
     if (message.length < 10 || message.length > 300) {
       setErrorMessage("Сообщение должно содержать от 10 до 300 символов");
       setValidMessage(true);
@@ -120,7 +125,26 @@ export const Forms: React.FC = () => {
 
   const sendForm = (e: React.MouseEvent) => {
     e.preventDefault();
-    console.log(forms);
+    const data = JSON.stringify(forms);
+    fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      body: data,
+    }).then((response) => {
+      if (response.ok) {
+        setStatus("Запрос отправлен успешно");
+      } else {
+        setStatus("Ошибка при отправке запроса");
+      }
+    });
+    cleanForm();
+  };
+
+  const cleanForm = () => {
+    setUsername("");
+    setEmail("");
+    setUserphone("");
+    setDate("");
+    setMessage("");
   };
 
   return (
@@ -153,6 +177,7 @@ export const Forms: React.FC = () => {
             id="email"
             placeholder="Введите E-mail"
             formNoValidate
+            value={email}
             onChange={validEmail}
           />
           <p className="form-error">{errorEmail}</p>
@@ -167,6 +192,7 @@ export const Forms: React.FC = () => {
             name="phone"
             id="phone"
             placeholder="Введите номер телефона"
+            inputMode="numeric"
             value={userphone}
             onChange={validPhone}
           />
@@ -181,8 +207,9 @@ export const Forms: React.FC = () => {
             type="date"
             name="date"
             id="date"
+            value={date}
             max={getToday()}
-            onFocus={validDate}
+            onChange={validDate}
           />
           <p className="form-error">{errorDate}</p>
         </div>
@@ -198,14 +225,20 @@ export const Forms: React.FC = () => {
             name="message"
             id="message"
             placeholder="Введите сообщение"
+            value={message}
             onChange={validMessage}
           ></textarea>
           <p className="form-error">{errorMessage}</p>
         </div>
-        <button className="send-btn" disabled={validButton} onClick={sendForm}>
-          Отправить
-        </button>
+        <input
+          type="button"
+          className="send-btn"
+          disabled={validButton}
+          onClick={sendForm}
+          value="Отправить"
+        ></input>
       </form>
+      <div className="status">{status}</div>
     </div>
   );
 };
