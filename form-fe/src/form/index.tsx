@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { FormType } from "../interface/Forms";
 import { getToday } from "../utils/getToday";
+import { FormField } from "./FormField";
 import "./style.scss";
 
 export const Forms: React.FC = () => {
-  const [username, setUsername] = useState("");
-  const [isValidName, setValidName] = useState(true);
-  const [errorName, setErrorName] = useState("");
-  const [email, setEmail] = useState("");
-  const [isValidEmail, setValidEmail] = useState(true);
-  const [errorEmail, setErrorEmail] = useState("");
-  const [userphone, setUserphone] = useState("");
-  const [isValidPhone, setValidPhone] = useState(true);
-  const [errorPhone, setErrorPhone] = useState("");
-  const [date, setDate] = useState("");
-  const [isValidDate, setValidDate] = useState(true);
-  const [errorDate, setErrorDate] = useState("");
-  const [message, setMessage] = useState("");
-  const [isValidMessage, setValidMessage] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [username, setUsername] = useState<string>("");
+  const [isValidName, setValidName] = useState<boolean>(true);
+  const [errorName, setErrorName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [isValidEmail, setValidEmail] = useState<boolean>(true);
+  const [errorEmail, setErrorEmail] = useState<string>("");
+  const [userphone, setUserphone] = useState<string>("");
+  const [isValidPhone, setValidPhone] = useState<boolean>(true);
+  const [errorPhone, setErrorPhone] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+  const [isValidDate, setValidDate] = useState<boolean>(true);
+  const [errorDate, setErrorDate] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [isValidMessage, setValidMessage] = useState<boolean>(true);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [validButton, setValidButton] = useState<boolean>(true);
   const [status, setStatus] = useState<string>("");
   const [forms, setForm] = useState<FormType>({
@@ -30,7 +31,7 @@ export const Forms: React.FC = () => {
   });
 
   useEffect(() => {
-    const isValid =
+    const isValid: boolean =
       !isValidName &&
       !isValidEmail &&
       !isValidPhone &&
@@ -40,7 +41,7 @@ export const Forms: React.FC = () => {
   }, [isValidDate, isValidEmail, isValidMessage, isValidName, isValidPhone]);
 
   const colorErrorLabel = (errorMessage: string) => {
-    const color = !errorMessage ? "#000000" : "#db2a2a";
+    const color: string = !errorMessage ? "#000000" : "#db2a2a";
     return color;
   };
 
@@ -49,8 +50,8 @@ export const Forms: React.FC = () => {
   };
 
   const validName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.value;
-    const reg = /^\s?[a-zA-Z]{3,30}\s([a-zA-Z]{3,30})$/i.test(name);
+    const name: string = e.target.value;
+    const reg: boolean = /^\s?[a-zA-Z]{3,30}\s([a-zA-Z]{3,30})$/i.test(name);
     if (!reg) {
       setErrorName(
         "Поле должно состоять из 2-х слов латинского алфавита, длинной от 3 до 30 символов и 1 пробел между словами"
@@ -66,9 +67,11 @@ export const Forms: React.FC = () => {
   };
 
   const validEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const email = e.target.value;
+    const email: string = e.target.value;
     setEmail(email);
-    const reg = /^[-\w.]+@([A-z0-9][-A-z0-9]+\.)+[A-z]{2,4}$/gi.test(email);
+    const reg: boolean = /^[-\w.]+@([A-z0-9][-A-z0-9]+\.)+[A-z]{2,4}$/gi.test(
+      email
+    );
     if (!reg) {
       setErrorEmail("Введите корректный E-mail");
       setValidEmail(true);
@@ -81,7 +84,7 @@ export const Forms: React.FC = () => {
   };
 
   const validPhone = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const phone = e.target.value;
+    const phone: string = e.target.value.replace(/\D+/g, "");
     if (phone.length !== 10 && phone.length !== 19) {
       setErrorPhone("Введите номер в формате YYYXXXXXXX, где YYY - код");
       setUserphone(phone);
@@ -97,7 +100,7 @@ export const Forms: React.FC = () => {
   };
 
   const validDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const date = e.target.value;
+    const date: string = e.target.value;
     setDate(date);
     if (date === "" || date > getToday()) {
       setErrorDate("Введите корректную дату");
@@ -110,7 +113,7 @@ export const Forms: React.FC = () => {
   };
 
   const validMessage = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const message = e.target.value;
+    const message: string = e.target.value;
     setMessage(message);
     if (message.length < 10 || message.length > 300) {
       setErrorMessage("Сообщение должно содержать от 10 до 300 символов");
@@ -125,7 +128,7 @@ export const Forms: React.FC = () => {
 
   const sendForm = (e: React.MouseEvent) => {
     e.preventDefault();
-    const data = JSON.stringify(forms);
+    const data: string = JSON.stringify(forms);
     fetch("https://jsonplaceholder.typicode.com/posts", {
       method: "POST",
       body: data,
@@ -151,11 +154,12 @@ export const Forms: React.FC = () => {
     <div className="container-form">
       <h1 className="form-title">Обратная связь</h1>
       <form>
-        <div>
-          <label htmlFor="name" style={{ color: colorErrorLabel(errorName) }}>
-            Имя и Фамилия
-          </label>
-          <br />
+        <FormField
+          name="name"
+          title="Имя и Фамилия"
+          color={colorErrorLabel(errorName)}
+          error={errorName}
+        >
           <input
             type="text"
             name="name"
@@ -164,13 +168,13 @@ export const Forms: React.FC = () => {
             value={username}
             onChange={validName}
           />
-          <p className="form-error">{errorName}</p>
-        </div>
-        <div>
-          <label htmlFor="email" style={{ color: colorErrorLabel(errorEmail) }}>
-            E-mail
-          </label>
-          <br />
+        </FormField>
+        <FormField
+          name="email"
+          title="E-mail"
+          color={colorErrorLabel(errorEmail)}
+          error={errorEmail}
+        >
           <input
             type="email"
             name="email"
@@ -180,13 +184,13 @@ export const Forms: React.FC = () => {
             value={email}
             onChange={validEmail}
           />
-          <p className="form-error">{errorEmail}</p>
-        </div>
-        <div>
-          <label htmlFor="phone" style={{ color: colorErrorLabel(errorPhone) }}>
-            Номер телефона
-          </label>
-          <br />
+        </FormField>
+        <FormField
+          name="phone"
+          title="Номер телефона"
+          color={colorErrorLabel(errorPhone)}
+          error={errorPhone}
+        >
           <input
             type="tel"
             name="phone"
@@ -196,13 +200,13 @@ export const Forms: React.FC = () => {
             value={userphone}
             onChange={validPhone}
           />
-          <p className="form-error">{errorPhone}</p>
-        </div>
-        <div>
-          <label htmlFor="date" style={{ color: colorErrorLabel(errorPhone) }}>
-            Дата рождения
-          </label>
-          <br />
+        </FormField>
+        <FormField
+          name="date"
+          title="Дата рождения"
+          color={colorErrorLabel(errorDate)}
+          error={errorDate}
+        >
           <input
             type="date"
             name="date"
@@ -211,16 +215,13 @@ export const Forms: React.FC = () => {
             max={getToday()}
             onChange={validDate}
           />
-          <p className="form-error">{errorDate}</p>
-        </div>
-        <div>
-          <label
-            htmlFor="message"
-            style={{ color: colorErrorLabel(errorMessage) }}
-          >
-            Оставьте свое сообщение
-          </label>
-          <br />
+        </FormField>
+        <FormField
+          name="message"
+          title="Оставьте свое сообщение"
+          color={colorErrorLabel(errorMessage)}
+          error={errorMessage}
+        >
           <textarea
             name="message"
             id="message"
@@ -228,8 +229,7 @@ export const Forms: React.FC = () => {
             value={message}
             onChange={validMessage}
           ></textarea>
-          <p className="form-error">{errorMessage}</p>
-        </div>
+        </FormField>
         <input
           type="button"
           className="send-btn"
